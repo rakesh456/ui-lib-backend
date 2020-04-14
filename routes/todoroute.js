@@ -1,4 +1,5 @@
 var model = require('../models/model');
+const router = require('express').Router();
 var products_COLLECTION = model.products;
 var json = {};
 var products = [
@@ -16171,6 +16172,8 @@ var products = [
 exports.addTodo = _addTodo;
 exports.getproducts = _getproducts;
 exports.removeProduct = _removeProduct;
+exports.addProduct = _addProduct;
+exports.updateProduct = _updateProduct;
 
 /*-------------------------------------------------------*/
 
@@ -16258,10 +16261,7 @@ function _getproducts(req, res, next) {
 }
 
 function _removeProduct(req, res, next) {
-
-  
-  console.log(' Id ', req.body);
-  products_COLLECTION.remove({ProductID: req.params.id}, function
+  products_COLLECTION.remove({[req.body.primaryKey]: req.params.id}, function
   (error, todo) {
     console.log(error, ' todo ', todo);
     res.send({"success": todo});
@@ -16269,6 +16269,56 @@ function _removeProduct(req, res, next) {
   });
 }
 
+function _addProduct(req, res, next) {
+  console.log(' body ', req.body);
+	var todo = new products_COLLECTION({
+			"ProductID":  req.body.ProductID,
+			"ProductName":  req.body.ProductName,
+			"SupplierID":  req.body.SupplierID,
+			"CategoryID":  req.body.CategoryID,
+			"QuantityPerUnit":  req.body.QuantityPerUnit,
+			"UnitPrice":  req.body.UnitPrice,
+			"UnitsInStock":  req.body.UnitsInStock,
+			"UnitsOnOrder":  req.body.UnitsOnOrder,
+			"ReorderLevel":  req.body.ReorderLevel,
+			"Discontinued":  req.body.Discontinued,
+			"Order_Details": req.body.Order_Details
+    });
+    console.log(' todo ', todo);
+		todo.save(function (error, todo) {
+      console.log(error, ' todo ', todo);
+      if (error) {
+				json.status = '0';
+				json.result = { 'Error': 'Error in Retreving Todo' };
+				json.totalRecords = 0;
+        res.send(json);
+        
+			} else {
+				json.status = '1';
+				res.send({"success": todo});
+			}
+    });
+}
 
-
+function _updateProduct(req, res, next) {
+  var newvalues = { $set: {
+    "ProductID":  req.body.ProductID,
+    "ProductName":  req.body.ProductName,
+    "SupplierID":  req.body.SupplierID,
+    "CategoryID":  req.body.CategoryID,
+    "QuantityPerUnit":  req.body.QuantityPerUnit,
+    "UnitPrice":  req.body.UnitPrice,
+    "UnitsInStock":  req.body.UnitsInStock,
+    "UnitsOnOrder":  req.body.UnitsOnOrder,
+    "ReorderLevel":  req.body.ReorderLevel,
+    "Discontinued":  req.body.Discontinued,
+    "Order_Details": req.body.Order_Details
+  } };
+  products_COLLECTION.updateOne({[req.body.primaryKey]: req.params.id}, newvalues, function
+  (error, todo) {
+    console.log(error, ' todo ', todo);
+    res.send({"success": todo});
+  
+  });
+}
 

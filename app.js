@@ -63,8 +63,12 @@ var todoroute = require('./routes/todoroute');
 
 /*---------------------------User Routes------------------------------*/
 app.post('/addTodo',todoroute.addTodo);
+app.post('/addProduct',todoroute.addProduct);
 app.get('/getproducts',todoroute.getproducts);
 app.post('/removeProduct/:id',todoroute.removeProduct);
+app.post('/updateProduct/:id',todoroute.updateProduct);
+
+
 
 
 app.get('/',routes.apiview);
